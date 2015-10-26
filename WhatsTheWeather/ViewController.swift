@@ -31,17 +31,36 @@ class ViewController: UIViewController {
             let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: {(data, response, error) -> Void in
                 
                 var urlError = false
+                var weather = ""
                 
-                if error != nil {
+                if error == nil {
+                    var urlContent = NSString(data: data, encoding: NSUTF8StringEncoding) as NSString!
+                    var urlContentArray = urlContent.componentsSeparatedByString("<span class=\"phrase\">")
+                    
+                    if urlContentArray.count > 0 {
+                        var weatherArray = urlContentArray[1].componentsSeparatedByString("</span>")
+                        weather = weatherArray[0] as! String
+                        
+                    } else {
+                        urlError = true
+                    }
                     
                 } else {
                     urlError = true
                 }
                 
-                if urlError == true {
-                    self.showError()
+                dispatch_async(dispatch_get_main_queue()) {
+                
+                    if urlError == true {
+                        self.showError()
+                    } else {
+                        self.resultLabel.text = weather
+                    }
                 }
             })
+            
+            task.resume()
+            
         } else {
             showError()
         }
