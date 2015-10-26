@@ -14,18 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet var userCity: UITextField!
     
     @IBAction func findWeather(sender: AnyObject) {
-    }
-
-    @IBOutlet var resultLabel: UILabel!
-    
-    func showError() {
-        resultLabel.text = "Was not able to find weather for " + userCity.text + ". Please try again."
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        var url = NSURL(string: "http://www.weather-forecast.com/locations/London/forecasts/latest")
+        var url = NSURL(string: "http://www.weather-forecast.com/locations/" + userCity.text.stringByReplacingOccurrencesOfString(" ", withString: "-") + "/forecasts/latest")
         if url != nil {
             
             let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: {(data, response, error) -> Void in
@@ -51,7 +40,7 @@ class ViewController: UIViewController {
                 }
                 
                 dispatch_async(dispatch_get_main_queue()) {
-                
+                    
                     if urlError == true {
                         self.showError()
                     } else {
@@ -65,6 +54,18 @@ class ViewController: UIViewController {
         } else {
             showError()
         }
+    }
+
+    @IBOutlet var resultLabel: UILabel!
+    
+    func showError() {
+        resultLabel.text = "Was not able to find weather for " + userCity.text + ". Please try again."
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+
     }
 
     override func didReceiveMemoryWarning() {
